@@ -7,10 +7,16 @@ public class PlayerInput : MonoBehaviour
     [SerializeField] private Camera _mainCamera;
     [SerializeField] private PlayerController _playerController;
 
-    [Header("Layer")]
+    [Header("Layers")]
     [SerializeField] private LayerMask _walkableLayer;
+    [SerializeField] private LayerMask _interactableLayer;
 
+    private Interactable _pendingInteractable;
 
+    private void Start()
+    {
+        _playerController.OnArrived += HandleArrived;
+    }
     private void Update()
     {
         if (Mouse.current.leftButton.wasPressedThisFrame)
@@ -21,13 +27,46 @@ public class PlayerInput : MonoBehaviour
 
     private void HandleLeftClick()
     {
-        Vector2 destination = GetMouseWorldPosition();
+        Vector2 worldPoint = GetMouseWorldPosition();
 
-        Debug.Log($"[PlayerInput]{destination}");
+        //PRIORIDAD 1: ¿Hay un interactable abajo del mouse?
+        Collider2D hit = Physics2D.OverlapPoint(worldPoint, _interactableLayer);
 
-        if (CanWalk(destination))
+        if (hit != null)
         {
-            _playerController.SetDestination(destination);
+            Interactable interactable = hit.GetComponent<Interactable>();
+            if (interactable != null && interactable.interactionPoint != null)
+            {
+                //Guardamos para interactuar al llegar
+                _pendingInteractable = interactable;
+
+                _playerController.SetDestination(interactable.interactionPoint.position);
+                return;
+            }
+        }
+
+        // PRIORIDAD 2 :
+        if (Physics2D.OverlapPoint(worldPoint, _walkableLayer))
+        {
+            _pendingInteractable = null; // Cancelamos interacción previa 
+            _playerController.SetDestination(worldPoint);
+        }
+
+        //Debug.Log($"[PlayerInput]{wordlPoint}");
+
+        //if (CanWalk(wordlPoint))
+        //{
+        //    _playerController.SetDestination(wordlPoint);
+        //}
+    }
+
+    // Este método se ejecuta automáticamente cuando PlayerController llega
+    private void HandleArrived()
+    {
+        if (_pendingInteractable != null)
+        {
+            _pendingInteractable.interact();
+            _pendingInteractable = null;
         }
     }
 
@@ -35,13 +74,18 @@ public class PlayerInput : MonoBehaviour
     {
         Vector2 mouseScreenPosition = Mouse.current.position.ReadValue();
 
-        Vector2 mouseWorldPosition = _mainCamera.ScreenToWorldPoint(mouseScreenPosition);
+        //Vector2 mouseWorldPosition = _mainCamera.ScreenToWorldPoint(mouseScreenPosition);
 
-        return mouseWorldPosition;
+        return _mainCamera.ScreenToWorldPoint(mouseScreenPosition);
     }
 
     private bool CanWalk(Vector2 point)
     {
         return Physics2D.OverlapPoint(point, _walkableLayer) != null; ;
+    }
+
+    private void OnDestroy()
+    {
+        _playerController.OnArrived -= HandleArrived;
     }
 }
