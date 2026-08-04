@@ -15,6 +15,6 @@ public class TrafficLight : Interactable
         _isGreen = !_isGreen;
         _spriteRenderer.color = _isGreen ? _colorGreen : _colorRed;
 
-        Debug.Log($"Semáforo ahora está: {(_isGreen ? "VERDE" : "ROJO")}");
+        Debug.Log($"[TrafficLight] Semáforo ahora está: {(_isGreen ? "VERDE" : "ROJO")}");
     }
 }
