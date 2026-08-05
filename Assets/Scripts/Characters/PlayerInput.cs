@@ -68,11 +68,26 @@ public class PlayerInput : MonoBehaviour
     private void HandleRightClick()
     {
         Vector2 worldPoint = GetMouseWorldPosition();
+
+        // DEBUG: veamos qué toca el raycast sin filtro de capa
+        Collider2D hitDebug = Physics2D.OverlapPoint(worldPoint);
+        if (hitDebug != null)
+        {
+            Debug.Log($"[PlayerInput- DEBUG] Toqué: {hitDebug.name} en capa: {LayerMask.LayerToName(hitDebug.gameObject.layer)}");
+        }
+        else
+        {
+            Debug.Log($"[PlayerInput- DEBUG] No toqué nada");
+        }
+
         Collider2D hit = Physics2D.OverlapPoint(worldPoint, _interactableLayer);
 
         if (hit != null)
         {
+            Debug.Log($"[PlayerInput- DEBUG] Filtrado Ok: {hit.name} ");
             Interactable interactable = hit.GetComponent<Interactable>();
+
+            Debug.Log($"[PlayerInput- DEBUG] Interactable encontrado: {interactable != null}");
             interactable?.Examine(); //sólo miramos, no caminamos
         }
     }
