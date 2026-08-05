@@ -23,6 +23,11 @@ public class PlayerInput : MonoBehaviour
         {
             HandleLeftClick();
         }
+
+        if (Mouse.current.rightButton.wasPressedThisFrame)
+        {
+            HandleRightClick();
+        }
     }
 
     private void HandleLeftClick()
@@ -60,12 +65,24 @@ public class PlayerInput : MonoBehaviour
         //}
     }
 
+    private void HandleRightClick()
+    {
+        Vector2 worldPoint = GetMouseWorldPosition();
+        Collider2D hit = Physics2D.OverlapPoint(worldPoint, _interactableLayer);
+
+        if (hit != null)
+        {
+            Interactable interactable = hit.GetComponent<Interactable>();
+            interactable?.Examine(); //sólo miramos, no caminamos
+        }
+    }
+
     // Este método se ejecuta automáticamente cuando PlayerController llega
     private void HandleArrived()
     {
         if (_pendingInteractable != null)
         {
-            _pendingInteractable.interact();
+            _pendingInteractable.Interact();
             _pendingInteractable = null;
         }
     }
@@ -79,10 +96,7 @@ public class PlayerInput : MonoBehaviour
         return _mainCamera.ScreenToWorldPoint(mouseScreenPosition);
     }
 
-    private bool CanWalk(Vector2 point)
-    {
-        return Physics2D.OverlapPoint(point, _walkableLayer) != null; ;
-    }
+ 
 
     private void OnDestroy()
     {

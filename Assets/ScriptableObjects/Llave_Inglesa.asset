@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 964db7e34ab990e43b0710d109e925c4, type: 3}
   m_Name: Llave_Inglesa
   m_EditorClassIdentifier: Assembly-CSharp::ItemSO
-  itenName: Llave inglesa
+  itemName: LLave inglesa
   icon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   description: Es una llave que sirve para ajustar o aflojar algo.

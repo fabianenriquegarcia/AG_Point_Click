@@ -8,9 +8,9 @@ public class TrafficLight : Interactable
 
     private bool _isGreen = false;
 
-    public override void interact()
+    public override void Interact()
     {
-        base.interact();
+        base.Interact();
 
         _isGreen = !_isGreen;
         _spriteRenderer.color = _isGreen ? _colorGreen : _colorRed;
