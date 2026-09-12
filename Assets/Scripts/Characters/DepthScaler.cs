@@ -5,7 +5,7 @@ public class DepthScaler : MonoBehaviour
     [SerializeField] private Transform _depthBottom; // Arrastrá el objeto de la escena
     [SerializeField] private Transform _depthTop;
     [SerializeField] private float _scaleAtBottom = 1.0f;
-    [SerializeField] private float _scaleAtTop = 0.3f;
+    [SerializeField] private float _scaleAtTop = 0.5f;
 
     private float _yBottom;
     private float _yTop;
